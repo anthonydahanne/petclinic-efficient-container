@@ -1,2 +1,1 @@
-./mvnw clean package
-docker build -t petclinic-jdbc-unpacked .
+./mvnw clean package spring-boot:build-image

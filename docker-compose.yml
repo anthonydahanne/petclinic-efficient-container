@@ -10,9 +10,11 @@ services:
     volumes:
       - ./sql:/docker-entrypoint-initdb.d/
   petclinic:
-    image: petclinic-jdbc-unpacked
+    image: petclinic-jdbc:1.0.0-SNAPSHOT
     ports:
       - "8080:8080"
+    environment:
+      - JAVA_TOOL_OPTIONS="-XX:ActiveProcessorCount=2"
     deploy:
       resources:
         limits:
