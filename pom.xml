@@ -81,13 +81,13 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
+<!--            <scope>test</scope>-->
         </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.postgresql</groupId>-->
+<!--            <artifactId>postgresql</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -113,6 +113,11 @@
                     <image>
                         <buildpacks>
                             <buildpack>anthonydahanne/java:cds-april-24</buildpack>
+<!--							<buildpack>dmikusa/bellsoft-liberica:gh-130-3</buildpack>-->
+<!--							<buildpack>paketobuildpacks/syft:latest</buildpack>-->
+<!--							<buildpack>paketobuildpacks/executable-jar:latest</buildpack>-->
+<!--							<buildpack>paketobuildpacks/dist-zip:latest</buildpack>-->
+<!--							<buildpack>anthonydahanne/spring-boot:cds-april-24</buildpack>-->
                         </buildpacks>
                         <builder>paketobuildpacks/builder-jammy-buildpackless-tiny</builder>
                         <env>
