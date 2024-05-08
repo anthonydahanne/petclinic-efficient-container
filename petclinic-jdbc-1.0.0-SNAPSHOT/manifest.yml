@@ -1,0 +1,21 @@
+---
+applications:
+- name: petclinic-jdbc
+  memory: 2G
+  random-route: true
+    #  path: target/petclinic-jdbc-1.0.0-SNAPSHOT.jar
+#  buildpack: java_buildpack_offline
+  buildpacks:
+#    - /Users/anthonyd2/workspaces/cloudfoundry/java-buildpack
+    - https://github.com/anthonydahanne/java-buildpack.git#playing
+#  stack: tanzu-jammy-full-stack
+#  entrypoint:
+#    - java -jar whatever.jar
+  env:
+#    BP_NATIVE_IMAGE: true
+#    CNB_PLATFORM_API: 0.12
+#    JBP_LOG_LEVEL: info
+    JAVA_OPTS: "-Dspring.aot.enabled=true"
+    JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: '{enabled: false}'
+    SPRING_PROFILES_ACTIVE: h2
+    JBP_CONFIG_OPEN_JDK_JRE: '{ jre: { version: 21.+ } }'
