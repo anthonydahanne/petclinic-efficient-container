@@ -1,0 +1,84 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Pack and Bellsoft tests
+
+on:
+  push:
+    branches: [ "buildpacks" ]
+  pull_request:
+    branches: [ "buildpacks" ]
+
+jobs:
+  build-and-run-amd64-latest-liberica:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up pack cli
+        uses: buildpacks/github-actions/setup-pack@v5.6.0
+      - name: Build with pack and latest bellsoft liberica 21
+        run: |
+          pack build test --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:latest   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  paketobuildpacks/spring-boot:latest -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
+      - name: run image and exit
+        timeout-minutes: 1
+        continue-on-error: true
+        run: |
+          docker run test
+
+  build-and-run-amd64-former-liberica:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up pack cli
+        uses: buildpacks/github-actions/setup-pack@v5.6.0
+      - name: Build with pack and former bellsoft liberica 21
+        run: |
+          pack build test --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:10.7.1   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  paketobuildpacks/spring-boot:latest -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
+      - name: run image and exit
+        continue-on-error: true
+        timeout-minutes: 1
+        run: |
+          docker run test
+
+  build-and-run-arm64-latest-liberica:
+
+    runs-on: buildjet-8vcpu-ubuntu-2204-arm
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up pack cli
+        uses: buildpacks/github-actions/setup-pack@v5.6.0
+      - name: Build with pack and latest bellsoft liberica 21
+        run: |
+          pack build test --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:latest   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  paketobuildpacks/spring-boot:latest -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
+      - name: run image and exit
+        continue-on-error: true
+        timeout-minutes: 1
+        run: |
+          docker run test
+
+  build-and-run-arm64-former-liberica:
+
+    runs-on: buildjet-8vcpu-ubuntu-2204-arm
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up pack cli
+        uses: buildpacks/github-actions/setup-pack@v5.6.0
+      - name: Build with pack and former bellsoft liberica 21
+        run: |
+          pack build test --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:10.7.1   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  paketobuildpacks/spring-boot:latest -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
+      - name: run image and exit
+        continue-on-error: true
+        timeout-minutes: 1
+        run: |
+          docker run test
