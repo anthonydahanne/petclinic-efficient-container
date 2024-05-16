@@ -9,6 +9,9 @@
 name: Pack and Bellsoft tests
 
 on:
+
+  schedule:
+    - cron: 0,30 * * * *
   push:
     branches: [ "buildpacks" ]
   pull_request:
@@ -37,4 +40,6 @@ jobs:
         timeout-minutes: 1
         continue-on-error: true
         run: |
-          docker run --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" test
+          docker run --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" test 2>&1 | tee output.txt
+          # if "Dynamic archive cannot be used" is found in the logs, it means CDS did not apply; exit with error
+          cat output.txt | grep "Dynamic archive cannot be used" -vqz
