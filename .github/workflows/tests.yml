@@ -25,8 +25,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
       - name: Set up pack cli
-        uses: buildpacks/github-actions/setup-pack@v5.6.0
+        run: brew install buildpacks/tap/pack
       - name: Build with pack and bellsoft liberica buildpack ${{ matrix.bellsoft_liberica_bp_version }}
         run: |
           pack build test --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:${{ matrix.bellsoft_liberica_bp_version }}   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  paketobuildpacks/spring-boot:latest -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
