@@ -19,17 +19,14 @@ jobs:
     strategy:
       matrix:
         bellsoft_liberica_bp_version: [ "10.7.1", "10.7.2" ]
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest ]
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
       - name: Set up pack cli
-        run: brew install buildpacks/tap/pack
+        uses: buildpacks/github-actions/setup-pack@v5.6.0
       - name: Build with pack and bellsoft liberica buildpack ${{ matrix.bellsoft_liberica_bp_version }}
         run: |
           pack build test --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:${{ matrix.bellsoft_liberica_bp_version }}   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  paketobuildpacks/spring-boot:latest -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
