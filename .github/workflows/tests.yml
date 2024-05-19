@@ -22,9 +22,9 @@ jobs:
     strategy:
       matrix:
         bellsoft_liberica_bp_version: [ "10.7.1", "10.7.2" ]
-        os: [ ubuntu-latest, buildjet-8vcpu-ubuntu-2204-arm ]
+        runner: [ ubuntu-latest, arm64 ]
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - uses: actions/checkout@v4
@@ -32,14 +32,14 @@ jobs:
         uses: buildpacks/github-actions/setup-pack@v5.6.0
       - name: Build with pack and bellsoft liberica buildpack ${{ matrix.bellsoft_liberica_bp_version }}
         run: |
-          pack build test --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:${{ matrix.bellsoft_liberica_bp_version }}   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  paketobuildpacks/spring-boot:latest -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
+          pack build test --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:${{ matrix.bellsoft_liberica_bp_version }}   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  anthonydahanne/spring-boot:cds-log-a-lot -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
       - name: java version
         run: |
           docker run --entrypoint=/layers/paketo-buildpacks_bellsoft-liberica/jre/bin/java test -version
       - name: run image and exit
         timeout-minutes: 1
         run: |
-          timeout 10s docker run -it test 2>&1 | tee output.txt; test $? -eq 143 && echo "Container ran for 10 seconds without failing"
+          timeout 10s docker run test 2>&1 | tee output.txt; test $? -eq 143 && echo "Container ran for 10 seconds without failing"
           cat output.txt
           # if "Dynamic archive cannot be used" is found in the logs, it means CDS did not apply; exit with error
           echo "Testing for the presence of 'Dynamic archive cannot be used'; failing the build if we find it "
