@@ -11,7 +11,7 @@ name: Pack and Bellsoft tests
 on:
 
   schedule:
-    - cron: 0,30 * * * *
+    - cron: 0,15,30,45 * * * *
   push:
     branches: [ "buildpacks" ]
   pull_request:
@@ -21,7 +21,6 @@ jobs:
   build-and-run-different-liberica:
     strategy:
       matrix:
-        bellsoft_liberica_bp_version: [ "10.7.1", "10.7.2" ]
         runner: [ ubuntu-latest, arm64 ]
 
     runs-on: ${{ matrix.runner }}
@@ -30,12 +29,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up pack cli
         uses: buildpacks/github-actions/setup-pack@v5.6.0
-      - name: Build with pack and bellsoft liberica buildpack ${{ matrix.bellsoft_liberica_bp_version }}
+      - name: Build with pack and bellsoft liberica buildpack anthonydahanne/bellsoft-liberica:libjvm-jre
         run: |
-          pack build test --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b gcr.io/paketo-buildpacks/bellsoft-liberica:${{ matrix.bellsoft_liberica_bp_version }}   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  anthonydahanne/spring-boot:cds-log-a-lot -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
-      - name: java version
-        run: |
-          docker run --entrypoint=/layers/paketo-buildpacks_bellsoft-liberica/jre/bin/java test -version
+          pack build test --env JAVA_TOOL_OPTIONS="-Xlog:cds -XX:+PrintFlagsFinal" --env BP_JVM_VERSION=21 --env BP_JVM_CDS_ENABLED=true --env BP_SPRING_AOT_ENABLED=true  -b anthonydahanne/bellsoft-liberica:libjvm-jre   -b paketobuildpacks/syft:latest -b paketobuildpacks/maven:latest   -b paketobuildpacks/executable-jar:latest  -b  anthonydahanne/spring-boot:cds-log-a-lot -B paketobuildpacks/builder-jammy-buildpackless-tiny:latest
       - name: run image and exit
         timeout-minutes: 1
         run: |
