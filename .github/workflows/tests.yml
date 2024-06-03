@@ -9,9 +9,6 @@
 name: Pack and Bellsoft tests
 
 on:
-
-  schedule:
-    - cron: 0,15,30,45 * * * *
   push:
     branches: [ "buildpacks" ]
   pull_request:
