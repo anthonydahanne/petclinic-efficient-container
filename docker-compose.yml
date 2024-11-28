@@ -11,10 +11,14 @@ services:
       - ./sql:/docker-entrypoint-initdb.d/
   petclinic:
     image: petclinic-jdbc:1.0.0-SNAPSHOT
+#    environment:
+#      - SERVICE_BINDING_ROOT=/bindings
+#    volumes:
+#      - ./AppDynamicsDownload:/bindings/app-dynamics
     ports:
       - "8080:8080"
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 2048M
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '2.0'
+#          memory: 2048M
